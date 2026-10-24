@@ -1,0 +1,22 @@
+# Direct research dependencies from the user-supplied cluster snapshot.
+# Python 3.11.14; Linux x86_64; PyTorch build targets CUDA 12.6.
+# Version record, not an independently tested installation lock.
+# The PyTorch +cu126 build may require its original package/wheel source.
+torch==2.13.0+cu126
+transformers==4.57.6
+accelerate==1.14.0
+nnsight==0.5.15
+sae-lens==6.37.3
+numpy==2.4.6
+pandas==3.0.5
+scipy==1.17.1
+scikit-learn==1.8.0
+datasets==4.5.0
+tqdm==4.70.0
+requests==2.32.5
+matplotlib==3.11.1
+seaborn==0.13.2
+plotly==6.5.2
+statsmodels==0.14.6
+huggingface-hub==0.36.2
+safetensors==0.8.0

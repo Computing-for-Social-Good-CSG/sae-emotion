@@ -1,0 +1,33 @@
+{
+  "status": "passed",
+  "scope": "CPU execution of actual notebook input-construction definitions isolated via AST; no GPU imports or inference.",
+  "environment": {
+    "python": "3.13.5",
+    "pandas": "2.2.3"
+  },
+  "main_heldout_rows": 1974,
+  "alternative_prompt_templates": 3,
+  "constructed_main_prompts_checked": 5922,
+  "external_retained_rows": {
+    "xed_en": 2803,
+    "emoevent_en": 3998
+  },
+  "checks": [
+    "All 1,974 recovered sentences reconstruct the saved original prompts exactly and in the original row order.",
+    "All labels and five duplicate text/label rows beyond the first are preserved.",
+    "All 5,922 alternative prompts match one application to raw text (three templates x 1,974 rows).",
+    "Repeated source keys with the same raw text do not expand held-out rows; literal prompt-like words in original sentences are preserved.",
+    "Ambiguous/missing source mappings, missing raw-text fields, invalid split rows, and reordered checkpoint holdouts are rejected.",
+    "External XED and EmoEvent inputs remain raw text in their original retained row order."
+  ],
+  "input_sha256": {
+    "data/val_df.csv": "c4dbc9789093adff2cf9a19a02d1a599e567956c966b85463f4eb83fea73d217",
+    "data/train_df.csv": "38005dfa553e62bf1dcd2a7eca03b3b6a9acec0bb99773f0b6d69162778dea2c",
+    "data/self_reported_ekman_zeroshot_preds.csv": "8f6ca1d40dd1d56ca99eb9bf5746abe78f9fe9491113f1692741ceb09ca1b5ed"
+  },
+  "corrected_result_directory": "data/prompt_robustness_evaluation_raw_text",
+  "requires_gpu_rerun": true,
+  "not_tested": [
+    "Model predictions and paper-score reproduction"
+  ]
+}

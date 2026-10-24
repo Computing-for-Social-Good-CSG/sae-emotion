@@ -1,0 +1,34 @@
+# Credentials and local environment
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+.venv/
+venv/
+env/
+__pycache__/
+*.py[cod]
+*.egg-info/
+build/
+dist/
+.DS_Store
+.ipynb_checkpoints/
+
+# Local data and generated experiment products. Keep documentation only.
+/data/*
+!/data/README.md
+!/data/manifest.json
+/outputs/
+/checkpoints/
+*.pt
+*.pth
+*.npy
+*.npz
+*.safetensors
+*.sqlite*
+*.log
+*.out
+*.err
+*.zip
+

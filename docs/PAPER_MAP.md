@@ -1,0 +1,29 @@
+# Paper-to-code map
+
+Reference: the user-supplied 21-page camera-ready PDF, “Why Are Some Emotions Harder for LLMs? Uncovering the Causal Mechanisms of Emotion Inference via Sparse Autoencoders.” Locations below reflect the supplied code, not a claim that a particular saved run produced the final numbers.
+
+| Paper item | Organized entry points | Coverage / missing inputs |
+| --- | --- | --- |
+| Section 3: datasets and restricted-label prediction | `experiments/rq1_features/extract_activations.py`; `src/sae_emotion/utils.py` | Main 9,870-row data and Gemma-2-2B prediction file supplied. This combined CSV is the release's starting point; upstream EXPRESS filtering code is intentionally excluded for now. |
+| Section 4: 1% activation filtering, top 10% candidates | `experiments/rq1_features/select_candidates.py`; `src/sae_emotion/feature_utils.py` | Implemented; requires hidden-state/SAE arrays and correct-prediction CSVs generated upstream. |
+| Section 4: individual causal effects | `experiments/rq1_features/estimate_causal_effects.py`; `src/sae_emotion/logit_ablation_utils.py` | Implemented; requires selected candidate table and model/SAE access. |
+| Section 4: entropy and joint top-k feature selection | `notebooks/rq1_features/03_select_core_features.ipynb`; `src/sae_emotion/emotion_entropy_utils.py` | Code present. Entropy assignment and top-k grid differ from the paper description; review required. No final selected-feature tables supplied. |
+| Figure 1; Figures A.1–A.2; Table A.1 | `notebooks/rq1_features/04_analyze_features.ipynb`; `notebooks/figures/paper_figures.ipynb`; `src/sae_emotion/visual_utils.py` | Plot/analysis code present. Needs per-model feature tables and activation arrays. |
+| Section 4 semantic subtypes; Table A.8 | `src/sae_emotion/subtype_utils.py`; `notebooks/rq1_features/04_analyze_features.ipynb` | Subtype clustering and example extraction present. Saved cluster assignments/final example provenance absent. |
+| Section 5 necessity; Figure 2A–B; Figure A.3 | `experiments/rq2_causal/ablate_features.py` | Requires final selected features and prediction files for each model. |
+| Section 5 sufficiency; Figure 2C; Figure A.4 | `experiments/rq2_causal/patch_activations.py` | Requires selected features and source/target prediction data. |
+| Section 5 adjacent-layer mediation; Table A.9 | `experiments/rq2_causal/adjacent_layer_mediation.py`; `src/sae_emotion/adjacent_group_path_patching_utils.py`; `notebooks/rq2_causal/adjacent_layer_mediation_analysis.ipynb` | Implemented. Driver additionally needs `emotion_feature_edges/all_affected_feature_edges.csv`; graph code is in `emotion_graph_utils.py` and the core-selection notebook. Final edges and results absent. |
+| Section 6 targeted steering; Figure 3A–B; Table A.2 | `experiments/rq3_steering/targeted_amplification.py`; corresponding RQ3 notebooks | Evaluates the supplied shared holdout after the author's split confirmation. Driver selects emotion-exclusive features; confirm this versus the paper's “all identified” target features. |
+| Section 6 global steering; Table 1; Figure 3C | `experiments/rq3_steering/train_global_steering.py`; `src/sae_emotion/feature_steering_utils.py`; `notebooks/rq3_steering/global_steering_analysis.ipynb` | Training, multiplier exports, XED/EmoEvent evaluation, and PPL code present. Shared 2,400/1,974 train/held-out files supplied and wired directly. Final model-specific configs, checkpoints, and metrics absent; selection/reporting protocol unresolved. |
+| Few-shot baseline; Table 1 | `notebooks/baselines/few_shot.ipynb` | Main and external evaluation present. Confirm final sampling protocol and output tables. |
+| Emotion-vector baseline; Table 1 | `notebooks/baselines/emotion_vector_400_steps.ipynb`; `emotion_vector_600_steps.ipynb`; `emotion_vector_external_evaluation.ipynb` | Both training variants use the supplied shared splits. Distinct settings are retained for reruns; final layer-sweep/checkpoint provenance remains absent. |
+| Prompt robustness; Tables A.3 and A.5 | `notebooks/evaluation/prompt_robustness.ipynb` | Canonical split verification and raw-sentence recovery now prevent nested prompts. CPU input checks pass; GPU scores must be rerun into the separate corrected-results directory. `archive/prompt_discovery/` is a separate exploratory re-discovery workflow. |
+| Lexical-shortcut / label-balance control; Table A.4 | `notebooks/evaluation/01_prepare_lexical_control.ipynb`; `02_evaluate_lexical_control.ipynb`; `experiments/evaluation/prepare_lexical_control.py` | Now supplied. CPU preprocessing reproduced n=1,332 (222 per emotion). The evaluator uses generated selected-feature CSVs and steering checkpoints; model scores have not been rerun. |
+| General capability; Table A.6 | `experiments/evaluation/general_capabilities.py`; `notebooks/evaluation/general_capabilities.ipynb` | MMLU, ARC-Challenge, BoolQ, and PIQA evaluator present; missing trained checkpoints. |
+| Significance; Table A.7 | End of `notebooks/rq3_steering/global_steering_analysis.ipynb` | Paired tests are present; the provided code applies Holm across all available tests rather than separately to the paper's blocks of five. Need the final table-generating version. |
+
+## Model coverage
+
+The paper reports seven base models: Gemma-2-2B, Gemma-2-9B, Gemma-3-4B-PT/IT, Gemma-3-12B-PT/IT, and Llama-3.1-8B. Feature analysis expands these into eleven model/SAE settings because the four Gemma-3 models use both `small` and `big` sparsity settings. Steering uses `small` for Gemma-3. These names describe sparsity, not a change from 16K feature width. Llama uses 32K features.
+
+Some scripts retain older model menus containing Gemma-3-1B, while others omit 12B models. Their defaults are historical run settings, not a complete final-paper sweep. Set model and SAE consistently before running a sequence.

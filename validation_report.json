@@ -1,0 +1,18 @@
+{
+  "status": "passed",
+  "scope": "Offline syntax, notebook execution cleanup, credential-pattern scan, active package import symbols, and supplied data hashes/schema/counts.",
+  "counts": {
+    "python_files": 46,
+    "notebooks": 31,
+    "code_cells": 291,
+    "data_files": 6
+  },
+  "failures": [],
+  "not_tested": [
+    "GPU execution",
+    "third-party dependency compatibility",
+    "model/SAE downloads",
+    "scientific equivalence or reproduction of paper results"
+  ],
+  "known_incomplete_archive_import": "clean_path_patching_utils (see docs/RELEASE_REVIEW.md)"
+}

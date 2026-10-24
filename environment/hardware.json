@@ -1,0 +1,11 @@
+{
+  "gpu_model": "NVIDIA H200",
+  "source": "Author reported in conversation",
+  "nvidia_driver_version": null,
+  "gpu_count": null,
+  "notes": [
+    "GPU model was supplied by the author, not detected by the environment collector.",
+    "The original environment_report.json is preserved unchanged; its capture did not expose a GPU.",
+    "Driver version, GPU count, memory capacity, and hardware form factor were not specified."
+  ]
+}

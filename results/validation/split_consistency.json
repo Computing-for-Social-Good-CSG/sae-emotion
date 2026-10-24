@@ -1,0 +1,79 @@
+{
+  "status": "passed",
+  "scope": "CPU execution of the actual data-loading/configuration and prompt-split definitions isolated via AST; GPU modules were not imported.",
+  "environment": {
+    "python": "3.13.5",
+    "pandas": "2.2.3",
+    "scikit-learn": "1.6.1"
+  },
+  "author_confirmation": "All steering uses the same train-test split; external evaluation requires only EmoEvent and XED.",
+  "checks": [
+    "Saved split rows and order preserved; full-corpus diagnostic remains 9,870 rows.",
+    "Default external datasets are exactly XED and EmoEvent.",
+    "Global driver matches the saved-split configuration; targeted script/notebook both evaluate val_df.csv.",
+    "Saved split bypasses splitting/balancing regardless of seed, val_size, and max_per_class.",
+    "Original stratified 80/20, seed-42 split plus 400-per-emotion sampling exactly reproduces both files and row order.",
+    "Invalid schema, empty/missing/blank rows, unknown labels, and missing main-corpus path are rejected.",
+    "Prompt evaluator uses canonical holdout and rejects checkpoint splits with different row order.",
+    "Both emotion-vector training notebooks point to the supplied canonical files."
+  ],
+  "files": {
+    "data/train_df.csv": {
+      "sha256": "38005dfa553e62bf1dcd2a7eca03b3b6a9acec0bb99773f0b6d69162778dea2c",
+      "rows": 2400,
+      "emotion_counts": {
+        "anger": 400,
+        "disgust": 400,
+        "fear": 400,
+        "joy": 400,
+        "sadness": 400,
+        "surprise": 400
+      }
+    },
+    "data/val_df.csv": {
+      "sha256": "c4dbc9789093adff2cf9a19a02d1a599e567956c966b85463f4eb83fea73d217",
+      "rows": 1974,
+      "emotion_counts": {
+        "anger": 358,
+        "disgust": 353,
+        "fear": 370,
+        "joy": 393,
+        "sadness": 389,
+        "surprise": 111
+      }
+    }
+  },
+  "source_matching": {
+    "all_split_text_label_pairs_in_main": true,
+    "seeded_training_exact_including_order": true,
+    "seeded_holdout_exact_including_order": true
+  },
+  "train_holdout_overlap": {
+    "unique_exact_input_texts": 2,
+    "unique_exact_input_text_and_emotion_pairs": 1,
+    "training_rows_with_overlapping_text": 2,
+    "holdout_rows_with_overlapping_text": 2,
+    "training_duplicate_pair_rows_beyond_first": 4,
+    "holdout_duplicate_pair_rows_beyond_first": 5
+  },
+  "lexical_control_overlap": {
+    "balanced_rows": 1332,
+    "balanced_csv_sha256": "47e586e9c342b54c6424cb98ee4cbf2491b4f3f66ca3414936af492193e5a8f3",
+    "unique_input_texts_also_in_training": 403,
+    "unique_input_texts_also_in_holdout": 275,
+    "balanced_rows_with_training_text": 404,
+    "balanced_rows_with_holdout_text": 275
+  },
+  "prompt_robustness_finding": {
+    "main_rows_already_containing_original_prompt_template": 9870,
+    "main_rows": 9870,
+    "original_supplied_notebook_behavior": "Renamed input_text to raw_text before applying another prompt template, nesting two prompts.",
+    "resolution": "Corrected in the active notebook: recover raw text by exact input_text/emotion match to the main source before applying one alternative template.",
+    "follow_up_validation": "results/validation/prompt_robustness_inputs.json"
+  },
+  "caveats": [
+    "No rows were deduplicated or reassigned.",
+    "main_val still selects the best steering checkpoint; a separate untouched test set is not established.",
+    "No GPU/model-score reproduction was attempted."
+  ]
+}

@@ -1,0 +1,137 @@
+{
+  "source": "sae-emotion-raw.zip and author-supplied train_df (1).csv / val_df.csv",
+  "files": [
+    {
+      "path": "data/combined_zeroshot_preds_google-gemma-2-2b.csv",
+      "sha256": "8dbab28964476031f4504ff6eeacc577cb6733fff73dcf511a1ade08eced4b46",
+      "delimiter": ",",
+      "rows": 9870,
+      "columns": [
+        "",
+        "emotion",
+        "text",
+        "dataset",
+        "pred_emotion",
+        "input_text"
+      ],
+      "emotion_counts": {
+        "anger": 1788,
+        "disgust": 1768,
+        "fear": 1849,
+        "joy": 1963,
+        "sadness": 1948,
+        "surprise": 554
+      },
+      "dataset_counts": {
+        "enisear": 715,
+        "envent": 3300,
+        "express": 460,
+        "isear": 5395
+      }
+    },
+    {
+      "path": "data/emoevent_en.csv",
+      "sha256": "d12849ac42e1a7a8816ba73654d5480dddd020fa67dab133b62d72377219916d",
+      "delimiter": "\t",
+      "rows": 7303,
+      "columns": [
+        "id",
+        "tweet",
+        "emotion",
+        "offensive"
+      ],
+      "emotion_counts": {
+        "anger": 392,
+        "disgust": 765,
+        "fear": 151,
+        "joy": 2039,
+        "others": 3305,
+        "sadness": 416,
+        "surprise": 235
+      }
+    },
+    {
+      "path": "data/self_reported_ekman_zeroshot_preds.csv",
+      "sha256": "8f6ca1d40dd1d56ca99eb9bf5746abe78f9fe9491113f1692741ceb09ca1b5ed",
+      "delimiter": ",",
+      "rows": 9870,
+      "columns": [
+        "emotion",
+        "text",
+        "dataset",
+        "pred_emotion",
+        "input_text"
+      ],
+      "emotion_counts": {
+        "anger": 1788,
+        "disgust": 1768,
+        "fear": 1849,
+        "joy": 1963,
+        "sadness": 1948,
+        "surprise": 554
+      },
+      "dataset_counts": {
+        "enisear": 715,
+        "envent": 3300,
+        "express": 460,
+        "isear": 5395
+      }
+    },
+    {
+      "path": "data/xed-en.csv",
+      "sha256": "748b1ff57ea778c21b9e86e7ac555f2180fc1bb7d5c4e4c5895cac04a948a119",
+      "delimiter": ",",
+      "rows": 2803,
+      "columns": [
+        "text",
+        "emotion"
+      ],
+      "emotion_counts": {
+        "anger": 668,
+        "disgust": 574,
+        "fear": 417,
+        "joy": 356,
+        "sadness": 487,
+        "surprise": 301
+      }
+    },
+    {
+      "path": "data/train_df.csv",
+      "source": "train_df (1).csv",
+      "sha256": "38005dfa553e62bf1dcd2a7eca03b3b6a9acec0bb99773f0b6d69162778dea2c",
+      "delimiter": ",",
+      "rows": 2400,
+      "columns": [
+        "input_text",
+        "emotion"
+      ],
+      "emotion_counts": {
+        "anger": 400,
+        "disgust": 400,
+        "fear": 400,
+        "joy": 400,
+        "sadness": 400,
+        "surprise": 400
+      }
+    },
+    {
+      "path": "data/val_df.csv",
+      "source": "val_df.csv",
+      "sha256": "c4dbc9789093adff2cf9a19a02d1a599e567956c966b85463f4eb83fea73d217",
+      "delimiter": ",",
+      "rows": 1974,
+      "columns": [
+        "input_text",
+        "emotion"
+      ],
+      "emotion_counts": {
+        "anger": 358,
+        "disgust": 353,
+        "fear": 370,
+        "joy": 393,
+        "sadness": 389,
+        "surprise": 111
+      }
+    }
+  ]
+}
