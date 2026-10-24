@@ -49,7 +49,7 @@ MODELS = [
 MODEL_NAME = MODELS[3]
 SAE_SIZE = "small"
 
-INPUT_CSV = "data/self_reported_ekman_zeroshot_preds.csv"
+INPUT_CSV = "data/combined_emotions.csv"
 OUTPUT_DIR = "data"
 
 TEXT_COL = "text"

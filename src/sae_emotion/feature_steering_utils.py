@@ -1761,7 +1761,7 @@ def build_default_gemma2_2b_config(
     cache_dir: Optional[str] = os.environ.get("HUGGINGFACE_HUB_CACHE", os.path.expanduser("~/.cache/huggingface/hub")),
     wikitext_cache_dir: Optional[str] = os.environ.get("HF_DATASETS_CACHE", os.path.expanduser("~/.cache/huggingface/datasets")),
     val_csv_path: Optional[str] = "data/val_df.csv",
-    main_csv_path: Optional[str] = "data/self_reported_ekman_zeroshot_preds.csv",
+    main_csv_path: Optional[str] = "data/combined_emotions.csv",
 ) -> FeatureSteeringConfig:
     return FeatureSteeringConfig(
         model_name="google/gemma-2-2b",

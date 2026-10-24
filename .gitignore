@@ -15,10 +15,15 @@ dist/
 .DS_Store
 .ipynb_checkpoints/
 
-# Local data and generated experiment products. Keep documentation only.
+# Include the five source CSVs; ignore generated experiment products.
 /data/*
 !/data/README.md
-!/data/manifest.json
+!/data/combined_emotions.csv
+!/data/train_df.csv
+!/data/val_df.csv
+!/data/emoevent_en.csv
+!/data/xed-en.csv
+/results/
 /outputs/
 /checkpoints/
 *.pt

@@ -1,2 +1,0 @@
-# Optional historical LoRA baseline dependency from the same snapshot.
-peft==0.18.1

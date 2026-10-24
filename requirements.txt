@@ -1,0 +1,8 @@
+# Core research versions; Python 3.11 and CUDA 12.6.
+# Additional analysis/notebook dependencies are in pyproject.toml extras.
+torch==2.13.0+cu126
+transformers==4.57.6
+sae-lens==6.37.3
+nnsight==0.5.15
+accelerate==1.14.0
+datasets==4.5.0

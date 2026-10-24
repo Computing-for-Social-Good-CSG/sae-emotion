@@ -1,7 +1,0 @@
-emotion,shared_top_k_all_prompts,shared_top_k_fraction,shared_core_all_prompts,smallest_core_size,shared_core_fraction_of_smallest
-anger,11,0.55,6,7,0.8571428571428571
-disgust,11,0.55,15,23,0.6521739130434783
-fear,11,0.55,5,5,1.0
-joy,10,0.5,8,11,0.7272727272727273
-sadness,10,0.5,10,11,0.9090909090909091
-surprise,8,0.4,5,5,1.0

@@ -8,8 +8,8 @@ version = "0.1.0"
 description = "Research code for causal sparse emotion features in language models"
 readme = "README.md"
 requires-python = ">=3.10"
-# Exact recorded cluster versions are in requirements/ and environment/.
-# Extras below describe capabilities; they are not an installation lock.
+# Core research versions are pinned in requirements.txt.
+# Extras below provide analysis and notebook dependencies.
 dependencies = []
 
 [project.optional-dependencies]
@@ -21,7 +21,6 @@ research = [
 ]
 preprocessing = ["numpy", "pandas", "scipy", "scikit-learn"]
 notebooks = ["jupyterlab", "ipykernel"]
-lora = ["peft"]
 
 [tool.setuptools.packages.find]
 where = ["src"]

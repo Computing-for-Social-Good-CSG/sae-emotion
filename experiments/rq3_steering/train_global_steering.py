@@ -41,7 +41,7 @@ CACHE_DIR = None
 WIKITEXT_CACHE_DIR = os.environ.get("HF_DATASETS_CACHE", os.path.expanduser("~/.cache/huggingface/datasets"))
 TRAIN_CSV_PATH = "data/train_df.csv"
 VAL_CSV_PATH = "data/val_df.csv"
-MAIN_CSV_PATH = "data/self_reported_ekman_zeroshot_preds.csv"
+MAIN_CSV_PATH = "data/combined_emotions.csv"
 FEATURE_CSV_NAME = "auto_selected_unique_features_with_affected_emotions.csv"
 
 GEMMA3_SMALL_MODELS = {

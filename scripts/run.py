@@ -31,7 +31,7 @@ def main():
         return
     script = ROOT / STAGES[args.stage]
     print(f"Running {script.relative_to(ROOT)} with its saved configuration.", flush=True)
-    print("Model/SAE/run settings are in that script; see docs/RELEASE_REVIEW.md.", flush=True)
+    print("Review the model, SAE, and run settings at the top of that script.", flush=True)
     sys.path.insert(0, str(ROOT / "src"))
     os.chdir(ROOT)
     sys.argv = [str(script)]

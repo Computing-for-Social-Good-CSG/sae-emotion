@@ -1,24 +1,21 @@
-# Supplied local data
+# Data
 
-CSV contents are copied byte-for-byte from the input ZIP and the author's subsequent split uploads; only download-number suffixes were removed. These files are ignored by Git until dataset provenance and redistribution terms are confirmed. `manifest.json` records hashes, counts, and schemas without reproducing example text.
+These five CSV files are included in the repository. Generated predictions, arrays, checkpoints, and other experiment outputs are excluded by `.gitignore`.
 
-| File | Format | Contents |
-| --- | --- | --- |
-| `self_reported_ekman_zeroshot_preds.csv` | CSV | Main combined dataset; 9,870 rows with `emotion`, `text`, `dataset`, `pred_emotion`, `input_text` |
-| `combined_zeroshot_preds_google-gemma-2-2b.csv` | CSV | 9,870 rows with the same fields plus a saved row-index column; retain this index convention for downstream activation lookups |
-| `emoevent_en.csv` | **TSV** | External EmoEvent data; use `sep="\t"`; existing evaluators drop `others` |
-| `xed-en.csv` | CSV | External XED data with `text` and `emotion`; 2,803 rows |
-| `train_df.csv` | CSV | Author-supplied shared steering training split; 2,400 rows, exactly 400 per emotion; `input_text`, `emotion` |
-| `val_df.csv` | CSV | Author-supplied shared steering held-out split; 1,974 rows; `input_text`, `emotion` |
+| File | Rows | Columns |
+| --- | ---: | --- |
+| `combined_emotions.csv` | 9,870 | `emotion`, `text`, `dataset`, `input_text` |
+| `train_df.csv` | 2,400 | `input_text`, `emotion` |
+| `val_df.csv` | 1,974 | `input_text`, `emotion` |
+| `emoevent_en.csv` | 7,303 | `id`, `tweet`, `emotion`, `offensive`; **tab-separated** |
+| `xed-en.csv` | 2,803 | `text`, `emotion` |
 
-The main dataset contains ISEAR (5,395), enISEAR (715), enVent (3,300), and EXPRESS (460). Emotion counts are anger 1,788; disgust 1,768; fear 1,849; joy 1,963; sadness 1,948; surprise 554.
+`emotion` is the gold label. In the combined dataset, `text` is the original sentence, `dataset` identifies its source, and `input_text` contains the sentence in the original emotion-classification prompt. The combined sources are ISEAR (5,395), enISEAR (715), enVent (3,300), and EXPRESS (460). The upstream EXPRESS filtering code is outside this release.
 
-The author confirmed that all steering uses the same train/test split. The two supplied split files exactly match the original stratified 80/20 split with seed 42, followed by sampling 400 training examples per emotion and shuffling with seed 42, including row order. The 2,400 training rows are a balanced subset of the 7,896-row training partition; the remaining training-partition rows are not an additional test set. The held-out label counts are anger 358, disgust 353, fear 370, joy 393, sadness 389, surprise 111.
+The bundled model-prediction columns and redundant model-specific dataset copy have been removed. The combined dataset retains every source row and its original order. Running activation extraction creates fresh per-model `combined_zeroshot_preds_<model>.csv` files with `pred_emotion`, plus correctly predicted subsets and activation arrays for subsequent analysis. Preserve generated row indices when indexing those arrays.
 
-The global-steering driver and convenience builder now load these saved files directly without splitting or balancing them again. Both emotion-vector training notebooks already use these paths. The prompt evaluator verifies each generated run's saved holdout against `data/val_df.csv`, then matches `input_text`/`emotion` back to the main CSV's original `text` before applying an alternative prompt. `input_text` already includes the original prompt; global steering therefore leaves `train_apply_prompt_template=False`.
+The shared split files are unchanged: 2,400 training rows (400 per emotion) and 1,974 held-out rows. They match the stratified 80/20 split with seed 42, followed by training-class sampling and shuffling. Do not split the 2,400-row training file again. `input_text` already contains a prompt; steering uses it directly, while prompt robustness matches back to the combined dataset's raw `text`.
 
-Two distinct prompt texts occur in both supplied splits; one also has the same emotion label. Within training/held-out data there are respectively four/five duplicate text-label rows beyond the first occurrence. No rows were deleted or reassigned. See `results/validation/split_consistency.json` for exact checks and lexical-control overlaps. The code still uses `val_df` for checkpoint selection; these filenames do not establish a separate untouched test set.
+The original split has two prompt texts shared across training and held-out rows. The training code uses `val_df` for checkpoint selection. The lexical control is constructed from the full combined dataset and includes training examples; it is a full-corpus diagnostic. These behaviors are preserved.
 
-Only EmoEvent and XED are in the active external-evaluation scope. Feature activation arrays, final selected-feature lists, and steering checkpoints are generated by users from source. Upstream EXPRESS filtering code/decisions are outside current scope. Lexical-shortcut filtering and label balancing are included in `notebooks/evaluation/01_prepare_lexical_control.ipynb` and its exported CPU script. The supplied prediction columns are model outputs, not annotation labels.
-
-Generated intermediate files retain the original `data/` location to avoid breaking research paths. Generated artifacts are not included in Git by default.
+External evaluation uses only EmoEvent and XED. Read EmoEvent with `sep="\t"`; its 3,305 `others` rows are excluded, leaving 3,998 evaluation examples.

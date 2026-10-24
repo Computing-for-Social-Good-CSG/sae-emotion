@@ -2,73 +2,77 @@
 
 Research code accompanying **Why Are Some Emotions Harder for LLMs? Uncovering the Causal Mechanisms of Emotion Inference via Sparse Autoencoders**, by Bangzhao Shu, Arinjay Singh, and Mai ElSherief.
 
-This working copy organizes the supplied research archive around the paper. It contains the original experiment implementations, cleaned notebooks, local data, and a traceable migration record. **It is an organized release draft, not yet a verified reproduction of the final paper.** Missing experiment artifacts and code/paper differences are listed in [the release review](docs/RELEASE_REVIEW.md).
+## Setup
 
-## Where to start
-
-| Location | Contents |
-| --- | --- |
-| `src/sae_emotion/` | Shared model, SAE, feature-selection, intervention, and plotting code |
-| `experiments/rq1_features/` | Hidden-state extraction, candidate selection, single-feature causal effects |
-| `experiments/rq2_causal/` | Necessity, sufficiency, and adjacent-layer mediation |
-| `experiments/rq3_steering/` | Targeted feature amplification and global feature steering |
-| `experiments/evaluation/` | CPU lexical preprocessing and general-capability evaluation |
-| `notebooks/` | Feature analysis, baselines, robustness, statistics, and paper figures |
-| `data/` | Supplied datasets, normalized filenames, and data inventory; CSVs ignored by Git |
-| `environment/`, `requirements/` | Uploaded cluster environment and exact direct-dependency version records |
-| `results/` | Supplied overlap summaries and executed lexical-preprocessing, environment, and split checks |
-| `archive/` | Distinct exploratory implementations and unique notebook checkpoints |
-| `docs/` | Paper-to-code map, reproduction guide, and unresolved release questions |
-| `migration_manifest.csv` | Original filename, new location, source hash, and action for every source file |
-
-The original ZIP and additional uploads are the authoritative source backups. Large `.npy` activation files are intentionally excluded: users generate them by running the pipeline. No model weights or final steering checkpoints were supplied; these can also be generated from source. EXPRESS filtering code is outside this release's current scope. Notebook cell order and research parameters are retained except for the author-requested external-dataset restriction, explicit saved-split routing, and documented correction to nested robustness prompts; output images, execution state, embedded credentials, and machine-specific cache paths were removed. Different variants have not been silently merged.
-
-The local package includes the shared steering split: **2,400 training rows (400 per emotion)** and **1,974 held-out rows**. Global steering loads these files directly, and both emotion-vector training notebooks use the same paths. They exactly reproduce the original seeded split and row order. Active external evaluation covers **EmoEvent and XED only**. See [data/README.md](data/README.md) for the confirmed overlap and checkpoint-selection caveats.
-
-## Inspect on your Mac
-
-From this repository folder:
+The research environment uses **Python 3.11**, **CUDA 12.6**, and an **NVIDIA H200**. The six core library versions are listed in [requirements.txt](requirements.txt): PyTorch, Transformers, SAELens, NNsight, Accelerate, and Datasets. Analysis and notebook dependencies are listed in `pyproject.toml`.
 
 ```bash
-python3 scripts/check_repository.py
-python3 scripts/run.py --list
+python -m pip install -r requirements.txt -e '.[research,notebooks]'
 ```
 
-These commands use only Python's standard library and do not download models or start experiments. They validate syntax, notebook cleanup, credential patterns, package imports, and the supplied data's basic schema/counts. Passing these checks does not validate scientific results. The separate [lexical-control workflow](docs/LEXICAL_CONTROL.md) has also been executed locally through dataset construction, reproducing 1,332 balanced examples; model scores have not been rerun.
-
-For notebook browsing, use a Python 3.10+ environment:
-
-```bash
-python3 -m venv .venv
-source .venv/bin/activate
-python -m pip install -e '.[notebooks]'
-jupyter lab
-```
-
-Open notebooks inside this repository and run their first setup cell. That cell locates the repository, makes the shared modules importable, and resolves the original `data/...` paths from the repository root.
-
-## Run research experiments
-
-The original model experiments target CUDA GPUs. A Mac can inspect/edit the release and run lexical preprocessing; the full model experiments have not been validated on Apple Silicon or CPU. The [recorded cluster environment](docs/ENVIRONMENT.md) uses **Python 3.11.14, PyTorch 2.13.0+cu126, Transformers 4.57.6, and SAELens 6.37.3**. Exact direct-dependency versions are in `requirements/research-cluster.txt`, with the complete uploaded inventory in `environment/package_versions.txt`. These are recorded versions, not an independently validated installation lock. The optional `research` extras in `pyproject.toml` remain unpinned; use the cluster records for reproduction.
-
-In the existing cluster environment, register this package without changing its dependencies:
+If you already have the research environment, register this package without changing its installed dependencies:
 
 ```bash
 python -m pip install --no-deps --no-build-isolation -e .
 ```
 
-Edit the configuration block at the top of the relevant experiment script, then use the launcher. For example:
+Use your Hugging Face login or `HF_TOKEN` for model access. Set `HF_HOME` if you want a specific cache location.
+
+## Repository
+
+| Location | Contents |
+| --- | --- |
+| `src/sae_emotion/` | Shared SAE, feature-selection, intervention, and plotting utilities |
+| `experiments/rq1_features/` | Activation extraction, candidate selection, and causal effects |
+| `experiments/rq2_causal/` | Feature ablation, activation patching, and adjacent-layer mediation |
+| `experiments/rq3_steering/` | Targeted amplification and learned global steering |
+| `experiments/evaluation/` | Lexical-control preprocessing and general-capability evaluation |
+| `notebooks/` | Feature analysis, baselines, steering analysis, evaluation, and figures |
+| `data/` | The five source CSV files and their column descriptions |
+
+## Data
+
+The actual CSVs are included in `data/` and enabled for Git:
+
+| File | Rows | Purpose |
+| --- | ---: | --- |
+| `combined_emotions.csv` | 9,870 | Combined emotion dataset, without model predictions |
+| `train_df.csv` | 2,400 | Shared steering training split; 400 examples per emotion |
+| `val_df.csv` | 1,974 | Shared steering held-out split |
+| `emoevent_en.csv` | 7,303 | External EmoEvent dataset; tab-separated, with `others` excluded during evaluation |
+| `xed-en.csv` | 2,803 | External XED dataset |
+
+See [data/README.md](data/README.md) for columns and split details. Model predictions are generated during extraction and saved separately as `data/combined_zeroshot_preds_<model>.csv`; downstream feature analysis uses those generated predictions. Large activation arrays, checkpoints, and generated outputs stay ignored by Git.
+
+## Run the pipeline
+
+Edit the model, SAE, and run settings at the top of each experiment before running it. Launch commands from the repository folder:
 
 ```bash
 python scripts/run.py extract-activations
+python scripts/run.py select-candidates
+python scripts/run.py estimate-effects
 ```
 
-The launcher prints the selected script and runs it from the repository root. It does **not** harmonize model settings across stages. Follow [REPRODUCING.md](docs/REPRODUCING.md) for inputs, outputs, and the required order. Refer to [PAPER_MAP.md](docs/PAPER_MAP.md) for the paper section associated with each entry point.
+Next, run `notebooks/rq1_features/03_select_core_features.ipynb` to create the final selected-feature tables and graph edges. With those generated inputs, use the relevant stage:
 
-Use your own Hugging Face account with the required model access. Credentials are read from the environment or your existing local login. Never put access tokens in a notebook or commit them.
+```bash
+python scripts/run.py ablate-features
+python scripts/run.py patch-activations
+python scripts/run.py adjacent-mediation
+python scripts/run.py targeted-amplification
+python scripts/run.py train-steering
+```
 
-## Before publishing
+Global steering loads the supplied training and held-out CSVs directly. External evaluation uses EmoEvent and XED. The targeted multiplier sweep uses the shared held-out data. Each stage saves the outputs needed by later stages under `data/`.
 
-Resolve the methodological items in [RELEASE_REVIEW.md](docs/RELEASE_REVIEW.md), especially checkpoint selection, evaluation overlap, corrected robustness-score reruns, experiment settings, and final statistical-testing scope. The shared split files and lexical-control implementation are now included. Large activation files and pretrained run outputs are not required uploads for this source-based release. Steering variants are retained for readers to rerun; none is labeled the best without a comparable validation result. Choose a code license and confirm dataset redistribution terms. No license has been invented for the authors.
+For baselines, use the notebooks in `notebooks/baselines/`; both the 400-step and 600-step emotion-vector variants are available. For lexical control, run `python scripts/run.py prepare-lexical-control`, then `notebooks/evaluation/02_evaluate_lexical_control.ipynb` using generated steering checkpoints. Prompt robustness recovers raw sentences before applying each alternative prompt once; rerun it to obtain corrected scores in `data/prompt_robustness_evaluation_raw_text/`.
 
-The supplied CSVs are available locally but ignored by Git until their release provenance is settled. Check `git status` before committing. No commits or pushes were made during this organization pass.
+Run the first setup cell when opening a notebook. It sets the repository root and shared-module imports. List all launcher commands or check the source files without loading models:
+
+```bash
+python scripts/run.py --list
+python scripts/check_repository.py
+```
+
+CPU data and input-construction checks have passed. GPU experiments and paper scores have not been independently reproduced in this cleanup.

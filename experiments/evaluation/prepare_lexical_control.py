@@ -12,7 +12,7 @@ from sklearn.metrics import f1_score
 # Configuration
 # ============================================================
 
-INPUT_CSV_PATH = "data/self_reported_ekman_zeroshot_preds.csv"
+INPUT_CSV_PATH = "data/combined_emotions.csv"
 OUTPUT_DIR = Path("data/lexical_shortcut_control")
 
 TEXT_COL = "text"
