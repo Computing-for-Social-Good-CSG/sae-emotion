@@ -29,7 +29,7 @@ Use your Hugging Face login or `HF_TOKEN` for model access. Set `HF_HOME` to cho
 | `experiments/rq2_causal/` | Feature ablation, activation patching, and adjacent-layer mediation |
 | `experiments/rq3_steering/` | Targeted amplification and learned global steering |
 | `experiments/evaluation/` | Lexical-control preprocessing and general-capability evaluation |
-| `notebooks/` | Feature analysis, steering analysis, evaluation, and figures |
+| `notebooks/` | Core-feature selection, analysis, notebook-only evaluation, and figures |
 | `data/` | Source CSV files and steering splits and their column descriptions |
 
 ## Data
@@ -74,13 +74,27 @@ Global steering trains on `train_df.csv`, selects checkpoints on `val_df.csv`, a
 
 For this protocol, regenerate activations, feature selections, and steering checkpoints from the first stage in a fresh output directory. Previous full-corpus feature tables and checkpoints are not inputs to these runs.
 
-## Evaluation
+## Notebooks
 
-Run the first setup cell when opening a notebook. It sets the repository root and imports the shared modules.
+Run experiments with the `.py` entry points above. The notebooks below handle core-feature selection, analysis of saved outputs, and evaluations without a script equivalent. Run each notebook's first setup cell before continuing.
+
+| Notebook (under `notebooks/`) | Purpose |
+| --- | --- |
+| `rq1_features/03_select_core_features.ipynb` | Required core-feature selection and graph construction |
+| `rq1_features/04_analyze_features.ipynb` | Feature summaries and analysis |
+| `rq2_causal/adjacent_layer_mediation_analysis.ipynb` | Tables from saved mediation results |
+| `rq3_steering/targeted_amplification_analysis.ipynb` | Validation sweep plots and selected-multiplier test tables |
+| `rq3_steering/global_steering_analysis.ipynb` | Final selected-checkpoint evaluation tables |
+| `evaluation/02_evaluate_lexical_control.ipynb` | Lexical-control evaluation |
+| `evaluation/prompt_robustness.ipynb` | Alternative-prompt evaluation |
+| `evaluation/general_capability_analysis.ipynb` | Tables from the general-capability script's outputs |
+| `figures/paper_figures.ipynb` | Paper figures from experiment outputs |
+
+## Evaluation
 
 - **Lexical control:** run `python scripts/run.py prepare-lexical-control`, then `notebooks/evaluation/02_evaluate_lexical_control.ipynb` with the selected-feature files and trained steering checkpoints.
 - **Prompt robustness:** run `notebooks/evaluation/prompt_robustness.ipynb`. It recovers the original sentences for the held-out rows and applies each alternative prompt once. Outputs are saved to `data/prompt_robustness_evaluation_raw_text/`.
-- **General capabilities:** run `python scripts/run.py general-capabilities` with trained steering checkpoints.
+- **General capabilities:** run `python scripts/run.py general-capabilities` with trained steering checkpoints, then use `notebooks/evaluation/general_capability_analysis.ipynb` for tables.
 - **Analysis and figures:** use the corresponding RQ notebooks and `notebooks/figures/paper_figures.ipynb` after generating experiment outputs.
 
 List all available launcher commands:
