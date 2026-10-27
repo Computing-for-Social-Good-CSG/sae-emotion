@@ -49,7 +49,7 @@ MODELS = [
 MODEL_NAME = MODELS[3]
 SAE_SIZE = "small"
 
-INPUT_CSV = "data/combined_emotions.csv"
+INPUT_CSV = "data/feature_discovery_train.csv"
 OUTPUT_DIR = "data"
 
 TEXT_COL = "text"

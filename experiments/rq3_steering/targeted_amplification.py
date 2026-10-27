@@ -662,6 +662,25 @@ for MODEL_NAME in MODELS:
             max_examples=MAX_EXAMPLES,
         )
 
+        # Select using validation only; break ties by the smaller multiplier.
+        selected = sweep_df.sort_values(
+            ["after_macro_f1", "multiplier"], ascending=[False, True]
+        ).iloc[0]
+        test_summary, test_per_emotion, test_predictions = evaluate_before_after_steering(
+            dataset_csv_path="data/test_df.csv",
+            steering_dict=build_steering_dict(
+                target_features=target_features,
+                multipliers=[float(selected["multiplier"])] * len(target_features)),
+            batch_size=BATCH_SIZE, text_col=TEXT_COL, label_col=LABEL_COL,
+            apply_prompt_template=APPLY_PROMPT_TEMPLATE, max_examples=None,
+        )
+        test_prefix = os.path.join(output_dir, f"selected_test_run{run_idx}_{tag}")
+        pd.DataFrame([{"multiplier": float(selected["multiplier"]),
+                       "validation_macro_f1": float(selected["after_macro_f1"]),
+                       **test_summary}]).to_csv(test_prefix + "_metrics.csv", index=False)
+        test_per_emotion.to_csv(test_prefix + "_per_emotion.csv", index=False)
+        test_predictions.to_csv(test_prefix + "_predictions.csv", index=False)
+
         sweep_df["run_idx"] = run_idx
         sweep_df["target_emotion"] = target_emotion
         sweep_df["target_layer"] = target_layer

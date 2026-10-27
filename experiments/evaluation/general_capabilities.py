@@ -102,7 +102,7 @@ SAMPLE_SEED = 42
 
 OUTPUT_DIR = "data/general_capability_side_effects"
 FEATURE_CSV_NAME = "auto_selected_unique_features_with_affected_emotions.csv"
-STEERING_RUN_DIR_NAME = "lr_5e-3_l1_0p0"
+STEERING_RUN_DIR_NAME = "protocol_v2_lr_5e-3_l1_0p0"
 
 CACHE_DIR: Optional[str] = None
 DATASET_CACHE_DIR: Optional[str] = os.environ.get("HF_DATASETS_CACHE", os.path.expanduser("~/.cache/huggingface/datasets"))

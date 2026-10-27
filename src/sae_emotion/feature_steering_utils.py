@@ -1145,6 +1145,7 @@ class FeatureSteeringConfig:
     # balancing again. main_csv_path retains the full-corpus diagnostic.
     val_csv_path: Optional[str] = None
     main_csv_path: Optional[str] = None
+    test_csv_path: Optional[str] = None
 
 
 def parse_torch_dtype(dtype_name: str) -> torch.dtype:
@@ -1686,13 +1687,18 @@ def run_feature_steering_experiment(config: FeatureSteeringConfig):
         test_datasets_loaded.append((spec, test_df))
         print(f"{spec.name} size: {len(test_df)}")
 
-    eval_datasets: Dict[str, pd.DataFrame] = {}
-    if config.eval_main_full:
-        eval_datasets["main_full"] = train_all_df
-    if config.eval_main_val:
-        eval_datasets["main_val"] = val_df
-    for spec, test_df in test_datasets_loaded:
-        eval_datasets[spec.name] = test_df
+    # Only validation metrics may drive scheduling and checkpoint selection.
+    eval_datasets = {"main_val": val_df}
+    final_datasets = {spec.name: df for spec, df in test_datasets_loaded}
+    if config.test_csv_path is not None:
+        test_df = pd.read_csv(config.test_csv_path)
+        for selection_df in (train_df, val_df):
+            if set(test_df["input_text"]) & set(selection_df["input_text"]):
+                raise ValueError("Test sentences overlap training or validation.")
+        final_datasets["main_test"] = test_df
+        safe_save_csv(test_df, os.path.join(config.output_dir, "test_df.csv"))
+    if set(train_df["input_text"]) & set(val_df["input_text"]):
+        raise ValueError("Training and validation sentences overlap.")
 
     finetuner, history_df, epoch_metrics_df, epoch_per_emotion_df = train_feature_steering(
         finetuner=finetuner,
@@ -1713,6 +1719,15 @@ def run_feature_steering_experiment(config: FeatureSteeringConfig):
         save_epoch_predictions=config.save_epoch_predictions,
     )
 
+    # train_feature_steering restores the checkpoint chosen on validation.
+    selected_checkpoint_metrics = [
+        evaluate_and_save_report(finetuner, df, name, config.output_dir,
+                                 batch_size=config.eval_batch_size)
+        for name, df in final_datasets.items()
+    ]
+    safe_save_csv(pd.DataFrame(selected_checkpoint_metrics),
+                  os.path.join(config.output_dir, "selected_checkpoint_metrics.csv"))
+
     multipliers_df = finetuner.export_multipliers(
         output_csv_path=os.path.join(config.output_dir, "learned_feature_multipliers.csv"),
         description_csv_path=config.feature_csv_path,
@@ -1724,7 +1739,8 @@ def run_feature_steering_experiment(config: FeatureSteeringConfig):
 
     summary = {
         "baseline_epoch_metrics": baseline_metrics,
-        "final_epoch_metrics": final_metrics,
+        "last_validation_epoch_metrics": final_metrics,
+        "selected_checkpoint_test_metrics": selected_checkpoint_metrics,
         "num_trainable_feature_multipliers": finetuner.feature_optimizer.get_num_trainable_parameters(),
         "output_dir": config.output_dir,
         "saved_files": {
@@ -1762,6 +1778,7 @@ def build_default_gemma2_2b_config(
     wikitext_cache_dir: Optional[str] = os.environ.get("HF_DATASETS_CACHE", os.path.expanduser("~/.cache/huggingface/datasets")),
     val_csv_path: Optional[str] = "data/val_df.csv",
     main_csv_path: Optional[str] = "data/combined_emotions.csv",
+    test_csv_path: Optional[str] = "data/test_df.csv",
 ) -> FeatureSteeringConfig:
     return FeatureSteeringConfig(
         model_name="google/gemma-2-2b",
@@ -1770,6 +1787,7 @@ def build_default_gemma2_2b_config(
         train_csv_path=train_csv_path,
         val_csv_path=val_csv_path,
         main_csv_path=main_csv_path,
+        test_csv_path=test_csv_path,
         output_dir=output_dir,
         train_text_col="input_text",
         train_label_col="emotion",

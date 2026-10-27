@@ -91,7 +91,7 @@ def get_feature_dir(model_name: str, sae_size):
 def get_output_dir(model_name: str, sae_size, lambda_l1: float):
     feature_dir = get_feature_dir(model_name, sae_size)
     l1_tag = str(lambda_l1).replace(".", "p")
-    return os.path.join(feature_dir, "global_feature_steering", f"lr_5e-3_l1_{l1_tag}")
+    return os.path.join(feature_dir, "global_feature_steering", f"protocol_v2_lr_5e-3_l1_{l1_tag}")
 
 
 def cleanup_after_run():
@@ -141,6 +141,7 @@ def run_one(model_name: str, lambda_l1: float):
         train_csv_path=TRAIN_CSV_PATH,
         val_csv_path=VAL_CSV_PATH,
         main_csv_path=MAIN_CSV_PATH,
+        test_csv_path="data/test_df.csv",
         output_dir=output_dir,
 
         train_text_col="input_text",
