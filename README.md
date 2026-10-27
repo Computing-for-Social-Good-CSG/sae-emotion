@@ -29,7 +29,7 @@ Use your Hugging Face login or `HF_TOKEN` for model access. Set `HF_HOME` to cho
 | `experiments/rq2_causal/` | Feature ablation, activation patching, and adjacent-layer mediation |
 | `experiments/rq3_steering/` | Targeted amplification and learned global steering |
 | `experiments/evaluation/` | Lexical-control preprocessing and general-capability evaluation |
-| `notebooks/` | Feature analysis, baselines, steering analysis, evaluation, and figures |
+| `notebooks/` | Feature analysis, steering analysis, evaluation, and figures |
 | `data/` | Source CSV files and steering splits and their column descriptions |
 
 ## Data
@@ -74,11 +74,10 @@ Global steering trains on `train_df.csv`, selects checkpoints on `val_df.csv`, a
 
 For this protocol, regenerate activations, feature selections, and steering checkpoints from the first stage in a fresh output directory. Previous full-corpus feature tables and checkpoints are not inputs to these runs.
 
-## Baselines and evaluation
+## Evaluation
 
 Run the first setup cell when opening a notebook. It sets the repository root and imports the shared modules.
 
-- **Baselines:** use `notebooks/baselines/` for few-shot prompting and emotion-vector steering. Both 400-step and 600-step emotion-vector variants are available. Run the desired layers and step budgets on validation first; the highest validation macro-F1 selects a checkpoint per model. Then run `notebooks/baselines/emotion_vector_external_evaluation.ipynb` to evaluate that exact checkpoint on the main test set and external datasets.
 - **Lexical control:** run `python scripts/run.py prepare-lexical-control`, then `notebooks/evaluation/02_evaluate_lexical_control.ipynb` with the selected-feature files and trained steering checkpoints.
 - **Prompt robustness:** run `notebooks/evaluation/prompt_robustness.ipynb`. It recovers the original sentences for the held-out rows and applies each alternative prompt once. Outputs are saved to `data/prompt_robustness_evaluation_raw_text/`.
 - **General capabilities:** run `python scripts/run.py general-capabilities` with trained steering checkpoints.
