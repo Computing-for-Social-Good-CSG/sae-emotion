@@ -1,10 +1,12 @@
-# SAE Emotion
+# Why Are Some Emotions Harder for LLMs? Uncovering the Causal Mechanisms of Emotion Inference via Sparse Autoencoders
 
-Research code accompanying **Why Are Some Emotions Harder for LLMs? Uncovering the Causal Mechanisms of Emotion Inference via Sparse Autoencoders**, by Bangzhao Shu, Arinjay Singh, and Mai ElSherief.
+#### Bangzhao Shu, Arinjay Singh, and Mai ElSherief
+
+Code and data accompanying the paper.
 
 ## Setup
 
-The research environment uses **Python 3.11**, **CUDA 12.6**, and an **NVIDIA H200**. Core versions of PyTorch, Transformers, SAELens, NNsight, Accelerate, and Datasets are listed in [requirements.txt](requirements.txt). Analysis and notebook dependencies are listed in `pyproject.toml`.
+Use **Python 3.11** and a CUDA-capable NVIDIA GPU. The original software environment used **CUDA 12.6**. GPU memory requirements depend on the model, SAE, and batch size. Core versions of PyTorch, Transformers, SAELens, NNsight, Accelerate, and Datasets are listed in [requirements.txt](requirements.txt). Analysis and notebook dependencies are listed in `pyproject.toml`.
 
 From the repository folder, install the dependencies and package:
 
@@ -46,7 +48,7 @@ Datasets and steering splits are included in `data/`. Regenerate the shared spli
 | `emoevent_en.csv` | 7,303 | External EmoEvent dataset |
 | `xed-en.csv` | 2,803 | External XED dataset |
 
-See [data/README.md](data/README.md) for columns, file formats, and split details. Activation extraction generates model predictions in `data/combined_zeroshot_preds_<model>.csv`, along with the activation arrays needed for feature analysis. These generated files and subsequent checkpoints are stored locally under `data/` and excluded from Git by `.gitignore`.
+See [data/README.md](data/README.md) for columns, file formats, and split details. Activation extraction generates model predictions in `data/combined_zeroshot_preds_<model>.csv`, along with the activation arrays needed for feature analysis.
 
 ## Run the pipeline
 
